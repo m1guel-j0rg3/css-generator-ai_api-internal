@@ -27,7 +27,7 @@ export default async function handler(req, res) {
         // Verifica se o HTTP está OK
         if (!response.ok) {
             console.log("Erro HTTP da API:", response.status, response.statusText);
-            return res.status(500).json({ error: "Erro na API externa" });
+            return res.status(500).json({ error: rawData });
         }
 
         // Converte para JSON
