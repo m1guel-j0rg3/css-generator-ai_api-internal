@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
         botao.textContent = "Gerando...";
 
         try {
-            let resposta = await fetch("/api/groq", {
+            let resposta = await fetch("/api/gerar-css", { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt: textoUsuario })
