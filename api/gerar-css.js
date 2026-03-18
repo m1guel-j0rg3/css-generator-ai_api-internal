@@ -8,19 +8,20 @@ export default async function handler(req, res) {
     console.log("URL da API sendo chamada:", "https://api.groq.com/openai/v1/chat/completions");
 
     try {
-        const response = await fetch("https://api/groq.com/openai/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: "llama3-70b-8192",
-                messages: [
-                    { role: "user", content: req.body.prompt }
-                ]
-            })
-        });
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+    },
+    body: JSON.stringify({
+        model: "llama3-70b-8192",
+        messages: [
+            { role: "user", content: req.body.prompt }
+        ]
+    })
+});
+    });
 
         if (!response.ok) {
             console.log("Erro na API externa:", response.status, response.statusText);
