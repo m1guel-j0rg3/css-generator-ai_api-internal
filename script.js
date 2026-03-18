@@ -16,8 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ prompt: textoUsuario })
             });
 
-            if (!resposta.ok) throw new Error(`Erro na API: ${resposta.status}`);
+            let dados = await resposta.json();
 
+            if (!resposta.ok) {
+                console.error("Erro completo:", dados);
+                throw new Error(JSON.stringify(dados));
+            }
             let dados = await resposta.json();
 
                 if (!dados.css) {
