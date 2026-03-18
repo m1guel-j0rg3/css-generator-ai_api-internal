@@ -18,7 +18,9 @@ export default async function handler(req, res) {
             body: JSON.stringify({
                 model: "llama-3.1-8b-instant",
                 messages: [
-                    { role: "user", content: req.body.prompt }
+                    { role: "user",
+                      content: "Você é um gerador de código de HTML e CSS. Responda somente com código puro. NUNCA use crases, markdown ou explicações. Formato: primeiro <style> com o CSS depois o HTML. Siga exatamente o que o usuário pedir. Se pedir algo quicando, use translateY no @keyframes. Se pedir algo girando use rotate."
+                    }
                 ]
             })
         });
