@@ -11,29 +11,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             let resposta = await fetch("/api/gerar-css", { 
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt: textoUsuario })
-            });
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt: textoUsuario })
+});
 
-            let dados = await resposta.json();
+let dados = await resposta.json();
 
-            if (!resposta.ok) {
-                console.error("Erro completo:", dados);
-                throw new Error(JSON.stringify(dados));
-            }
-            let dados = await resposta.json();
+    if (!resposta.ok) {
+        console.error("Erro completo:", dados);
+        throw new Error(JSON.stringify(dados));
+    }
 
-                if (!dados.css) {
-                throw new Error("Resposta inválida da API");
-                }
+    if (!dados.css) {
+        throw new Error("Resposta inválida da API");
+    }
 
-            let resultado = dados.css;
-            // Remove blocos de markdown, se houver
-            let htmlLimpo = resultado.replace(/```html|```/g, "").trim();
+    let resultado = dados.css;
 
-            blococodigo.textContent = resultado;
-            blocoresultado.srcdoc = htmlLimpo;
+// Remove blocos de markdown, se houver
+    let htmlLimpo = resultado.replace(/```html|```/g, "").trim();
+
+        blococodigo.textContent = resultado;
+        blocoresultado.srcdoc = htmlLimpo;
 
         } catch (erro) {
             console.error(erro);
