@@ -25,13 +25,21 @@ export default async function handler(req, res) {
 
         console.log("Status da API:", response.status);
 
-        const text = await response.text();
-        console.log("Resposta bruta:", text);
+       const data = await response.json();
 
-        return res.status(response.status).json({
-            status: response.status,
-            resposta: text
+    const conteudo = data.choices?.[0]?.message?.content;
+
+    if (!conteudo) {
+        console.log("Resposta inválida:", data);
+        return res.status(500).json({
+            error: "Resposta inválida da API externa",
+            raw: data
         });
+    }
+
+    return res.status(200).json({
+        css: conteudo
+    });
 
     } catch (erro) {
         console.error("Erro real:", erro);
