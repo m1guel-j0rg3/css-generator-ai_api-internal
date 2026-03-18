@@ -5,6 +5,7 @@ export default async function handler(req, res) {
     
     console.log("Prompt recebido:", req.body.prompt);
     console.log("Chave GROQ_API_KEY:", process.env.GROQ_API_KEY ? "OK" : "NÃO ENCONTRADA");
+    console.log("URL da API sendo chamada:", "https://api.groq.com/openai/v1/chat/completions");
 
     try {
         const response = await fetch("https://api/groq.com/openai/v1/chat/completions", {
