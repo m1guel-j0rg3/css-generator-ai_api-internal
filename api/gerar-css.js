@@ -19,7 +19,10 @@ export default async function handler(req, res) {
                 model: "llama-3.1-8b-instant",
                 messages: [
                     { role: "user",
-                      content: "Você é um gerador de código de HTML e CSS. Responda somente com código puro. NUNCA use crases, markdown ou explicações. Formato: primeiro <style> com o CSS depois o HTML. Siga exatamente o que o usuário pedir. Se pedir algo quicando, use translateY no @keyframes. Se pedir algo girando use rotate."
+                      content: "{
+                      role: "system",
+                      content: "Você é um gerador de código HTML e CSS. Responda SOMENTE com código puro. NUNCA use crases, markdown ou explicações. Formato: primeiro <style> com o CSS, depois o HTML. Gere EXATAMENTE o que o usuário pedir, sem adicionar nenhum elemento extra. Não melhore, não incremente, não invente nada além do solicitado. Se pedir algo quicando, use translateY em @keyframes. Se pedir algo girando, use rotate."
+                    }"
                     }
                 ]
             })
