@@ -1,56 +1,57 @@
 export default async function handler(req, res) {
-    console.log("Funcao chamada");
-
     if (req.method !== "POST") {
-        console.log("Metodo invalido:", req.method);
-        return res.status(405).json({ error: "Metodo nao permitido" });
+        return res.status(405).json({ error: "Método não permitido" });
     }
 
-    try {
-        console.log("Body recebido:", req.body);
+    const { prompt } = req.body ?? {};
+    if (!prompt || typeof prompt !== "string" || prompt.trim() === "") {
+        return res.status(400).json({ error: "Campo 'prompt' é obrigatório." });
+    }
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
+    try {
         const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
             },
+            signal: controller.signal,
             body: JSON.stringify({
                 model: "llama-3.1-8b-instant",
                 messages: [
-                    { role: "user",
-                      content: "{
-                      role: "system",
-                      content: "Você é um gerador de código HTML e CSS. Responda SOMENTE com código puro. NUNCA use crases, markdown ou explicações. Formato: primeiro <style> com o CSS, depois o HTML. Gere EXATAMENTE o que o usuário pedir, sem adicionar nenhum elemento extra. Não melhore, não incremente, não invente nada além do solicitado. Se pedir algo quicando, use translateY em @keyframes. Se pedir algo girando, use rotate."
-                    }"
-                    }
+                    {
+                        role: "system",
+                        content: "Voce e um gerador de codigo HTML e CSS. Responda SOMENTE com codigo puro. Nunca use markdown, explicacoes ou texto fora do codigo. Formato: primeiro <style> com CSS, depois HTML. Gere exatamente o que o usuario pedir, sem adicionar elementos extras."
+                    },
+                    { role: "user", content: prompt }
                 ]
             })
         });
 
-        console.log("Status da API:", response.status);
+        clearTimeout(timeout);
 
-       const data = await response.json();
+        if (!response.ok) {
+            const errorData = await response.json();
+            return res.status(response.status).json({ error: "Erro na API Groq", detail: errorData });
+        }
 
-    const conteudo = data.choices?.[0]?.message?.content;
+        const data = await response.json();
+        const output = data.choices?.[0]?.message?.content;
 
-    if (!conteudo) {
-        console.log("Resposta inválida:", data);
-        return res.status(500).json({
-            error: "Resposta inválida da API externa",
-            raw: data
-        });
-    }
+        if (!output) {
+            return res.status(500).json({ error: "Resposta inválida da API", raw: data });
+        }
 
-    return res.status(200).json({
-        css: conteudo
-    });
-
+        return res.status(200).json({ output });
     } catch (erro) {
-        console.error("Erro real:", erro);
-        return res.status(500).json({
-            error: erro.message,
-            stack: erro.stack
-        });
+        clearTimeout(timeout);
+        if (erro.name === "AbortError") {
+            return res.status(504).json({ error: "Tempo limite da requisição atingido." });
+        }
+        console.error("Erro:", erro);
+        return res.status(500).json({ error: erro.message });
     }
 }
